@@ -22,16 +22,16 @@ public class ProductHandlerTest {
 
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
         productService = new ProductService(productRepository);
     }
 
     @Test
-    void testGetProducts(){
-        Product product = new Product(1,"Pan",1000);
-        Product product2 = new Product(2,"Pan Ajo",1000);
+    void testGetProducts() {
+        Product product = new Product(1, "Pan", 1000);
+        Product product2 = new Product(2, "Pan Ajo", 1000);
 
-        Mockito.when(productRepository.findAll()).thenReturn(Flux.just(product,product2));
+        Mockito.when(productRepository.findAll()).thenReturn(Flux.just(product, product2));
         StepVerifier.create(productService.getAllProducts())
                 .expectNext(product)
                 .expectNext(product2)
@@ -39,8 +39,8 @@ public class ProductHandlerTest {
     }
 
     @Test
-    void testGetProduct(){
-        Product product = new Product(1,"Pan",1000);
+    void testGetProduct() {
+        Product product = new Product(1, "Pan", 1000);
         Mockito.when(productRepository.findById(1)).thenReturn(Mono.just(product));
         StepVerifier.create(productService.findProductById(1))
                 .expectNext(product)
@@ -48,8 +48,8 @@ public class ProductHandlerTest {
     }
 
     @Test
-    void testSaveProduct(){
-        ProductDTO productDTO =  new ProductDTO("Chocolates",1);
+    void testSaveProduct() {
+        ProductDTO productDTO = new ProductDTO("Chocolates", 1);
         Product productSave = Product.builder().name(productDTO.getName()).price(productDTO.getPrice()).build();
         Mockito.when(productRepository.findByName(productDTO.getName())).thenReturn(Mono.empty());  // Producto no existe
         Mockito.when(productRepository.save(productSave)).thenReturn(Mono.just(productSave));
@@ -58,5 +58,27 @@ public class ProductHandlerTest {
                 .expectNext(productSave)
                 .verifyComplete()
         ;
+    }
+
+    @Test
+    void testDeleteProduct() {
+        ProductDTO productDTO = new ProductDTO("Chocolates", 1);
+        Mockito.when(productRepository.findById(1)).thenReturn(Mono.just(Product.builder().name(productDTO.getName()).price(productDTO.getPrice()).build()));
+        Mockito.when(productRepository.deleteById(1)).thenReturn(Mono.empty());
+        StepVerifier.create(productService.deleteProductById(1))
+                .expectNext()
+                .verifyComplete();
+    }
+
+    @Test
+    void testUpdateProduct() {
+        ProductDTO productDTO = new ProductDTO("Chocolates", 100);
+        Product productSave = Product.builder().id(1).name(productDTO.getName()).price(1).build();
+        Product productUpdate = Product.builder().id(1).name(productDTO.getName()).price(productDTO.getPrice()).build();
+        Mockito.when(productRepository.findById(1)).thenReturn(Mono.just(productSave));
+        Mockito.when(productRepository.repeatedName(1,productDTO.getName())).thenReturn(Mono.empty());
+        Mockito.when(productRepository.save(productUpdate)).thenReturn(Mono.just(productUpdate));
+        StepVerifier.create(productService.updateProduct(productDTO, 1)).expectNext(productUpdate)
+                .verifyComplete();
     }
 }
