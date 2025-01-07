@@ -38,9 +38,6 @@ public class JwtAuthenticationManager implements ReactiveAuthenticationManager {
                                                 .map(SimpleGrantedAuthority::new)
                                         )
                                         .collect(Collectors.toList())
-
-                        )
-                )
-                ;
+                        ));
     }
 }

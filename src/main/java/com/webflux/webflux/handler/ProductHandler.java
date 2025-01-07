@@ -7,8 +7,8 @@ import com.webflux.webflux.service.ProductService;
 import com.webflux.webflux.validation.ObjectValidation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
@@ -36,19 +36,20 @@ public class ProductHandler {
         return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).body(productMono, Product.class);
     }
 
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public Mono<ServerResponse> saveProduct(ServerRequest serverRequest) {
         Mono<ProductDTO> productMono = serverRequest.bodyToMono(ProductDTO.class).doOnNext(objectValidation::validate);
         return productMono.flatMap(p -> ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)
                 .body(productService.saveProduct(p), Product.class));
     }
-
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public Mono<ServerResponse> updateProduct(ServerRequest serverRequest) {
         int id = Integer.parseInt(serverRequest.pathVariable("id"));
         Mono<ProductDTO> productMono = serverRequest.bodyToMono(ProductDTO.class).doOnNext(objectValidation::validate);
         return productMono.flatMap(p -> ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)
                 .body(productService.updateProduct(p, id), Product.class));
     }
-
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public Mono<ServerResponse> deleteProduct(ServerRequest serverRequest) {
         int id = Integer.parseInt(serverRequest.pathVariable("id"));
         Mono<Product> productMono = productService.findProductById(id);

@@ -1,9 +1,11 @@
 package com.webflux.webflux.security.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -19,12 +21,14 @@ import java.util.stream.Stream;
 @Data
 @Builder
 public class Users implements UserDetails {
+    @Id
     private int id;
     private String username;
     public String email;
+    @JsonIgnore
     private String password;
     private String roles;
-    private boolean enabled;
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
