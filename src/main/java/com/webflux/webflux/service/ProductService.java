@@ -6,7 +6,6 @@ import com.webflux.webflux.exception.CustomException;
 import com.webflux.webflux.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -35,7 +34,7 @@ public class ProductService {
 
     public Mono<Product> saveProduct(ProductDTO product) {
         try {
-            Product productDTOSave = Product.builder().name(product.getName()).price(product.getPrice()).build();
+            Product productDTOSave = Product.builder().name(product.getName()).price(product.getPrice()).image(product.getImage()).build();
             return productRepository.findByName(product.getName()).flatMap(
                     product1 -> {
                         if (product1.getName().equals(product.getName())) {

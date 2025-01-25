@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 public class ProductDTO {
     @NotBlank(message = "name is mandatory")
     private String name;
+    private String image;
     @Min(value = 1, message = "Price must be greater then zero")
     private float price;
 
