@@ -17,7 +17,7 @@ public class ProductRouter {
     @Bean
     RouterFunction<ServerResponse> routerFunction(ProductHandler productHandler) {
         return RouterFunctions.route()
-                .GET(PATH, productHandler::getAllProducts)
+                .GET(PATH, productHandler::getAllProductsPage)
                 .GET(PATH + "/{id}", productHandler::getOneProduct)
                 .POST(PATH, productHandler::saveProduct)
                 .PUT(PATH + "/{id}", productHandler::updateProduct)

@@ -30,6 +30,14 @@ public class ProductHandler {
         return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).body(productsFlux, Product.class);
     }
 
+    public Mono<ServerResponse> getAllProductsPage(ServerRequest serverRequest) {
+        int page = serverRequest.queryParam("page").map(Integer::parseInt).orElse(0);
+        int size = serverRequest.queryParam("size").map(Integer::parseInt).orElse(10);
+
+        Flux<Product> productsFlux = productService.getAllProductPage(page,size);
+        return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).body(productsFlux, Product.class);
+    }
+
     public Mono<ServerResponse> getOneProduct(ServerRequest serverRequest) {
         int id = Integer.parseInt(serverRequest.pathVariable("id"));
         Mono<Product> productMono = productService.findProductById(id);

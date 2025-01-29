@@ -26,6 +26,11 @@ public class ProductController {
         return productService.getAllProducts();
     }
 
+    @GetMapping
+    public Flux<Product> getAllProductsPage(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        return productService.getAllProductPage(page, size);
+    }
+
     @GetMapping("/{id}")
     public Mono<Product> getProductById(@PathVariable("id") int idProduct) {
         return productService.findProductById(idProduct);
@@ -38,7 +43,7 @@ public class ProductController {
 
     @PutMapping("/{id}")
     public Mono<Product> updateProductById(@PathVariable("id") int idProduct, @RequestBody ProductDTO product) {
-        return productService.updateProduct(product,idProduct);
+        return productService.updateProduct(product, idProduct);
     }
 
 

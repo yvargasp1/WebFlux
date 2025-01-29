@@ -4,8 +4,11 @@ import com.webflux.webflux.dto.ProductDTO;
 import com.webflux.webflux.entity.Product;
 import com.webflux.webflux.exception.CustomException;
 import com.webflux.webflux.repository.ProductRepository;
+import com.webflux.webflux.repository.ProductRepositoryPage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -18,10 +21,16 @@ import reactor.core.publisher.Mono;
 public class ProductService {
 
     private final ProductRepository productRepository;
+
+    private final ProductRepositoryPage productRepositoryPage;
     private static final String NOT_FOUND = "Product not found.";
     private static final String FOUND = "Product found, same name.";
 
-
+    public Flux<Product> getAllProductPage(int page, int size){
+        Pageable pageable = PageRequest.of(page,size);
+        return productRepositoryPage.findAllBy(pageable)
+                .switchIfEmpty(Mono.error(new CustomException(HttpStatus.NOT_FOUND,NOT_FOUND)));
+    }
     public Flux<Product> getAllProducts() {
         return productRepository.findAll().switchIfEmpty(Mono.error(new CustomException(HttpStatus.NOT_FOUND , NOT_FOUND)));
     }
